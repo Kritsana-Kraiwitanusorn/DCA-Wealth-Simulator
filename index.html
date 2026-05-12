@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCA Wealth Simulator 💰</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="container">
+        <header>
+            <div class="header-badge">DCA SIMULATOR</div>
+            <h1>Build Wealth <span class="accent">Automatically</span></h1>
+            <p>Dollar-cost averaging simulation with real market data.</p>
+        </header>
+
+        <div class="input-card">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Stock Symbol</label>
+                    <input type="text" id="symbol" placeholder="AAPL, TSLA, NVDA..." value="AAPL" maxlength="6">
+                </div>
+                <div class="input-group">
+                    <label>Currency</label>
+                    <select id="currency" class="styled-select">
+                        <option value="USD">USD ($)</option>
+                        <option value="THB">THB (฿)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Monthly Investment</label>
+                    <div class="input-prefix-wrap">
+                        <span class="prefix" id="currency-prefix">$</span>
+                        <input type="number" id="monthly-amount" placeholder="500" value="500" min="1">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Period (Years)</label>
+                    <input type="number" id="years" placeholder="5" value="5" min="1" max="20">
+                </div>
+            </div>
+            <button id="calculate-btn" onclick="calculateDCA()">
+                <span id="btn-text">Simulate Returns</span>
+                <span id="btn-loader" class="hidden">
+                    <span class="spinner"></span> Fetching data...
+                </span>
+            </button>
+            <p id="error-msg" class="error-msg hidden"></p>
+        </div>
+
+        <div id="result-area" class="hidden">
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <small>Total Invested</small>
+                    <h2 id="total-invested">$0</h2>
+                </div>
+                <div class="stat-card highlighted">
+                    <small>Portfolio Value</small>
+                    <h2 id="current-value">$0</h2>
+                </div>
+                <div class="stat-card">
+                    <small>Total Gain/Loss</small>
+                    <h2 id="total-profit">0%</h2>
+                </div>
+                <div class="stat-card">
+                    <small>Total Shares</small>
+                    <h2 id="total-shares">0</h2>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <span class="chart-title">Portfolio Growth</span>
+                    <span class="chart-legend">
+                        <span class="dot green"></span>Portfolio Value
+                        <span class="dot gray"></span>Amount Invested
+                    </span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="wealthChart"></canvas>
+                </div>
+            </div>
+
+            <div class="disclaimer">
+                ⚠️ Simulated results based on historical prices. Past performance does not guarantee future returns.
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

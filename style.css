@@ -1,0 +1,350 @@
+/* ─── VARIABLES ──────────────────────────────────────────────────────────────── */
+:root {
+    --green: #10b981;
+    --green-dim: rgba(16, 185, 129, 0.12);
+    --red: #f87171;
+    --bg: #080e1a;
+    --bg2: #0d1526;
+    --card: #111d30;
+    --card2: #162035;
+    --border: #1e3050;
+    --text: #e8f0fe;
+    --muted: #64748b;
+    --accent: #38bdf8;
+    --font-display: 'Sora', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+}
+
+/* ─── RESET & BASE ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-display);
+    background-color: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+/* ─── BACKGROUND GRID ───────────────────────────────────────────────────────── */
+.bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ─── HEADER ────────────────────────────────────────────────────────────────── */
+header {
+    text-align: center;
+    margin-bottom: 32px;
+    animation: fadeDown 0.6s ease both;
+}
+
+.header-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: 4px 12px;
+    border-radius: 99px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+}
+
+header h1 {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+header h1 .accent {
+    color: var(--green);
+    position: relative;
+}
+
+header p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 300;
+}
+
+/* ─── INPUT CARD ─────────────────────────────────────────────────────────────── */
+.input-card {
+    background: var(--card);
+    padding: 28px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+input, .styled-select {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input:focus, .styled-select:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+/* Prefix wrap ($ / ฿ inside input) */
+.input-prefix-wrap {
+    position: relative;
+}
+
+.input-prefix-wrap .prefix {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.input-prefix-wrap input {
+    padding-left: 28px;
+}
+
+/* ─── BUTTON ─────────────────────────────────────────────────────────────────── */
+button#calculate-btn {
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px;
+    background: var(--green);
+    border: none;
+    border-radius: 14px;
+    color: #041a0e;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: 0.01em;
+}
+
+button#calculate-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+button#calculate-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+button#calculate-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ─── SPINNER ─────────────────────────────────────────────────────────────────── */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(4, 26, 14, 0.3);
+    border-top-color: #041a0e;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+}
+
+/* ─── ERROR MSG ──────────────────────────────────────────────────────────────── */
+.error-msg {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--red);
+    text-align: center;
+}
+
+/* ─── RESULT AREA ────────────────────────────────────────────────────────────── */
+#result-area {
+    animation: fadeUp 0.5s ease both;
+}
+
+/* ─── STAT GRID ──────────────────────────────────────────────────────────────── */
+.stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+    border-radius: 16px;
+    text-align: left;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover { transform: translateY(-2px); }
+
+.stat-card small {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+.stat-card h2 {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: -0.02em;
+}
+
+.stat-card.highlighted {
+    grid-column: span 2;
+    background: var(--green-dim);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.stat-card.highlighted h2 {
+    font-size: 1.6rem;
+    color: var(--green);
+}
+
+/* ─── CHART CARD ─────────────────────────────────────────────────────────────── */
+.chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 16px;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.chart-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+}
+
+.dot.green { background: var(--green); }
+.dot.gray  { background: #475569; }
+
+.chart-container {
+    position: relative;
+    height: 240px;
+}
+
+/* ─── DISCLAIMER ─────────────────────────────────────────────────────────────── */
+.disclaimer {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 0 10px;
+    line-height: 1.6;
+}
+
+/* ─── UTILITIES ──────────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────────────────────── */
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────────── */
+@media (max-width: 420px) {
+    .input-row { grid-template-columns: 1fr; }
+    .stat-card.highlighted h2 { font-size: 1.3rem; }
+    .chart-container { height: 190px; }
+}
