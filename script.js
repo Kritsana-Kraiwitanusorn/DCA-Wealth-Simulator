@@ -1,5 +1,5 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const WORKER_URL = 'https://dca-proxy.yourname.workers.dev'; // ← เปลี่ยนหลัง deploy
+const WORKER_URL = 'https://dca-proxy.k-data-api.workers.dev'; // ← เปลี่ยนหลัง deploy
 const CACHE_TTL  = 10 * 60 * 1000;
 const APP_VER    = 'v2.1.0';
 
