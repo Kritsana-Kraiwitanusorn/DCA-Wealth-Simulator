@@ -136,6 +136,18 @@ async function handlePrice(request, ctx) {
         return jsonError(`No valid price data for "${symbol}"`, 404);
     }
 
+    // ─── BUG FIX: ตัดเดือนปัจจุบันออก ────────────────────────────────────
+    // Yahoo Finance ส่งแท่งเทียนของเดือนปัจจุบันที่ยังไม่ปิดมาด้วย
+    // ทำให้ DCA นับเกิน 1 เดือน → totalInvested สูงกว่าความจริง
+    // แก้: ถ้า timestamp สุดท้ายอยู่ในเดือนเดียวกับวันนี้ → ตัดทิ้ง
+    const now      = new Date();
+    const lastDate = new Date(timestamps[timestamps.length - 1] * 1000);
+    if (lastDate.getFullYear() === now.getFullYear() &&
+        lastDate.getMonth()    === now.getMonth()) {
+        closes.pop();
+        timestamps.pop();
+    }
+
     // ─── ส่ง Response + บันทึก Cache ──────────────────────────────────────
     const body = JSON.stringify({ symbol, years, closes, timestamps });
 

@@ -12,27 +12,31 @@
 <body>
     <div class="bg-grid"></div>
     <div class="container">
+
         <header>
             <div class="header-badge">DCA SIMULATOR</div>
             <h1>Build Wealth <span class="accent">Automatically</span></h1>
             <p>Dollar-cost averaging simulation with real market data.</p>
         </header>
 
+        <!-- ─── INPUT CARD ─── -->
         <div class="input-card">
-            <div class="input-row">
-                <div class="input-group">
-                    <label>Stock Symbol</label>
-                    <input type="text" id="symbol" placeholder="AAPL, TSLA, NVDA..." value="AAPL" maxlength="6">
-                </div>
+
+            <!-- Mode toggle -->
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="mode-single" onclick="setMode('single')">Single Stock</button>
+                <button class="mode-btn" id="mode-compare" onclick="setMode('compare')">Compare 2 Stocks</button>
+            </div>
+
+            <!-- Shared row: currency / monthly / years -->
+            <div class="input-row three-col">
                 <div class="input-group">
                     <label>Currency</label>
-                    <select id="currency" class="styled-select">
+                    <select id="currency" class="styled-select" onchange="onCurrencyChange()">
                         <option value="USD">USD ($)</option>
                         <option value="THB">THB (฿)</option>
                     </select>
                 </div>
-            </div>
-            <div class="input-row">
                 <div class="input-group">
                     <label>Monthly Investment</label>
                     <div class="input-prefix-wrap">
@@ -45,40 +49,99 @@
                     <input type="number" id="years" placeholder="5" value="5" min="1" max="20">
                 </div>
             </div>
+
+            <!-- Symbol row (single mode) -->
+            <div id="row-single" class="input-row">
+                <div class="input-group" style="grid-column:span 2">
+                    <label>Stock Symbol</label>
+                    <input type="text" id="symbol" placeholder="AAPL, TSLA, NVDA, SPY..." value="AAPL" maxlength="6">
+                </div>
+            </div>
+
+            <!-- Symbol row (compare mode) -->
+            <div id="row-compare" class="input-row hidden">
+                <div class="input-group">
+                    <label>Stock A <span class="legend-dot green-dot"></span></label>
+                    <input type="text" id="symbol-a" placeholder="e.g. AAPL" value="AAPL" maxlength="6">
+                </div>
+                <div class="input-group">
+                    <label>Stock B <span class="legend-dot blue-dot"></span></label>
+                    <input type="text" id="symbol-b" placeholder="e.g. TSLA" value="TSLA" maxlength="6">
+                </div>
+            </div>
+
             <button id="calculate-btn" onclick="calculateDCA()">
                 <span id="btn-text">Simulate Returns</span>
-                <span id="btn-loader" class="hidden">
-                    <span class="spinner"></span> Fetching data...
-                </span>
+                <span id="btn-loader" class="hidden"><span class="spinner"></span> Fetching data...</span>
             </button>
             <p id="error-msg" class="error-msg hidden"></p>
         </div>
 
+        <!-- ─── RESULT AREA ─── -->
         <div id="result-area" class="hidden">
-            <div class="stat-grid">
-                <div class="stat-card">
-                    <small>Total Invested</small>
-                    <h2 id="total-invested">$0</h2>
+
+            <!-- Compare layout wrapper -->
+            <div id="compare-wrapper" class="compare-wrapper">
+
+                <!-- Panel A (always shown) -->
+                <div class="stock-panel" id="panel-a">
+                    <div class="panel-header">
+                        <span class="panel-symbol" id="label-a">AAPL</span>
+                        <span class="current-price" id="price-a"></span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <small>Total Invested</small>
+                            <h2 id="total-invested-a">$0</h2>
+                        </div>
+                        <div class="stat-card highlighted">
+                            <small>Portfolio Value</small>
+                            <h2 id="current-value-a">$0</h2>
+                        </div>
+                        <div class="stat-card">
+                            <small>Total Gain/Loss</small>
+                            <h2 id="total-profit-a">0%</h2>
+                        </div>
+                        <div class="stat-card">
+                            <small>Total Shares</small>
+                            <h2 id="total-shares-a">0</h2>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card highlighted">
-                    <small>Portfolio Value</small>
-                    <h2 id="current-value">$0</h2>
-                </div>
-                <div class="stat-card">
-                    <small>Total Gain/Loss</small>
-                    <h2 id="total-profit">0%</h2>
-                </div>
-                <div class="stat-card">
-                    <small>Total Shares</small>
-                    <h2 id="total-shares">0</h2>
+
+                <!-- Panel B (compare mode only) -->
+                <div class="stock-panel hidden" id="panel-b">
+                    <div class="panel-header blue-header">
+                        <span class="panel-symbol" id="label-b">TSLA</span>
+                        <span class="current-price" id="price-b"></span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <small>Total Invested</small>
+                            <h2 id="total-invested-b">$0</h2>
+                        </div>
+                        <div class="stat-card highlighted blue-hl">
+                            <small>Portfolio Value</small>
+                            <h2 id="current-value-b" class="blue-val">$0</h2>
+                        </div>
+                        <div class="stat-card">
+                            <small>Total Gain/Loss</small>
+                            <h2 id="total-profit-b">0%</h2>
+                        </div>
+                        <div class="stat-card">
+                            <small>Total Shares</small>
+                            <h2 id="total-shares-b">0</h2>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Chart -->
             <div class="chart-card">
                 <div class="chart-header">
-                    <span class="chart-title">Portfolio Growth</span>
-                    <span class="chart-legend">
-                        <span class="dot green"></span>Portfolio Value
+                    <span class="chart-title">Portfolio Growth + 1-Year Forecast</span>
+                    <span class="chart-legend" id="chart-legend">
+                        <span class="dot green"></span><span id="legend-a-name">Portfolio Value</span>
                         <span class="dot gray"></span>Amount Invested
                     </span>
                 </div>
@@ -87,10 +150,24 @@
                 </div>
             </div>
 
+            <!-- Forecast summary -->
+            <div class="forecast-card" id="forecast-card">
+                <div class="forecast-title">1-Year Forecast (based on CAGR)</div>
+                <div class="forecast-grid" id="forecast-grid"></div>
+            </div>
+
             <div class="disclaimer">
-                ⚠️ Simulated results based on historical prices. Past performance does not guarantee future returns.
+                ⚠️ Simulated & forecasted results based on historical prices. Past performance does not guarantee future returns.
             </div>
         </div>
+
+        <!-- Version -->
+        <footer class="app-footer">
+            <span>DCA Simulator</span>
+            <span class="version-badge">v2.1.0</span>
+            <span>· Real market data via Yahoo Finance</span>
+        </footer>
+
     </div>
     <script src="script.js"></script>
 </body>
